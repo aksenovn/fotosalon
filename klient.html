@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Цифровой фотоархив — Личный кабинет клиента</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background: #f1f5f9; padding: 20px; color: #1e293b; }
+        header { background: #fff; padding: 15px 30px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 25px; }
+        header h2 { color: #2563eb; font-size: 20px; }
+        
+        .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; max-width: 1200px; margin: 0 auto; }
+        @media (max-width: 768px) { .grid-container { grid-template-columns: 1fr; } }
+        
+        .card { background: #fff; border-radius: 12px; padding: 25px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); height: fit-content; }
+        h3 { margin-bottom: 15px; font-size: 18px; color: #0f172a; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; }
+        
+        /* Экран 4: Главная */
+        .photo-preview-container { text-align: center; background: #fafafa; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 15px; position: relative; }
+        .base-photo { width: 220px; height: 280px; object-fit: cover; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .btn { width: 100%; background: #2563eb; color: #fff; padding: 12px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 15px; transition: 0.2s; }
+        .btn:hover { background: #1d4ed8; }
+        
+        /* Экран 5.1: Умное кадрирование и маска */
+        .crop-box { position: relative; width: 220px; height: 280px; margin: 0 auto; overflow: hidden; }
+        .vector-mask { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="220" height="280" viewBox="0 0 220 280"><ellipse cx="110" cy="125" rx="55" ry="75" fill="none" stroke="%2338bdf8" stroke-width="3" stroke-dasharray="5,5"/><line x1="0" y1="110" x2="220" y2="110" stroke="%2310b981" stroke-width="1" stroke-dasharray="2,2"/><line x1="0" y1="140" x2="220" y2="140" stroke="%2310b981" stroke-width="1" stroke-dasharray="2,2"/></svg>'); background-size: cover; }
+        .slider-control { width: 100%; margin: 15px 0; }
+        
+        /* Экран 5: Форма заказа */
+        .select-input, .text-input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; margin-bottom: 15px; font-size: 14px; background: #fff; }
+        .dimensions-row { display: flex; gap: 10px; margin-bottom: 15px; }
+        
+        /* Экран 6: Оплата */
+        .payment-form { background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 15px; display: none; }
+        .sbp-btn { background: #ffffff; color: #000; border: 1px solid #000; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: bold; }
+        
+        /* Экран 6.1: Смартфон симуляция */
+        .phone-mock { width: 300px; height: 500px; background: #111; border-radius: 30px; margin: 30px auto; padding: 15px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); border: 4px solid #333; position: relative; }
+        .phone-screen { background: url('https://images.unsplash.com/photo-1579546929518-9e396f3cc809?auto=format&fit=crop&w=300&q=80'); background-size: cover; width: 100%; height: 100%; border-radius: 20px; padding: 20px 10px; position: relative; }
+        .push-notification { background: rgba(255,255,255,0.9); backdrop-filter: blur(5px); padding: 12px; border-radius: 12px; font-size: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-left: 4px solid #2563eb; animation: bounce 1s infinite alternate; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <select id="branch-select" onchange="resizeBranchSelect()" style="font-size: 18px; font-weight: bold; color: #2563eb; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px 45px 12px 15px; background: #fff; cursor: pointer; outline: none; font-family: inherit; max-width: 100%; box-sizing: border-box; line-height: 1.4; transition: width 0.15s ease;">
+            <option value="ciolkovskogo">Фотоателье «Цифровое фото», г. Дзержинск, пр. Циолковского, 21Г</option>
+            <option value="lenina">Фотоателье «Цифровое фото», г. Дзержинск, ул. Ленина, 45</option>
+        </select>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <span style="font-weight: 500;">Мария Иванова</span>
+            <a href="regandaut.html" class="btn" style="margin-top: 0; padding: 8px 16px; background: #ef4444; font-size: 14px; width: auto; text-decoration: none; text-align: center; line-height: 1;" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'">Выход</a>
+        </div>
+    </header>
+
+    <div class="grid-container">
+
+        <div class="card">
+            <h3>Доступные снимки</h3>
+            <div style="display: flex; gap: 15px; justify-content: center; background: #fafafa; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 15px;">
+                <div class="photo-option" onclick="selectPhoto(this, 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80')" style="cursor: pointer; position: relative; border: 3px solid #2563eb; border-radius: 8px; overflow: hidden; padding: 4px; background: #fff; transition: 0.2s;">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" style="width: 100px; height: 130px; object-fit: cover; border-radius: 4px; display: block;" alt="Снимок 1">
+                    <div class="select-badge" style="position: absolute; top: 8px; right: 8px; background: #2563eb; color: #fff; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">✓</div>
+                </div>
+                <div class="photo-option" onclick="selectPhoto(this, 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80')" style="cursor: pointer; position: relative; border: 3px solid transparent; border-radius: 8px; overflow: hidden; padding: 4px; background: #fff; transition: 0.2s;">
+                    <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80" style="width: 100px; height: 130px; object-fit: cover; border-radius: 4px; display: block;" alt="Снимок 2">
+                    <div class="select-badge" style="position: absolute; top: 8px; right: 8px; background: #2563eb; color: #fff; border-radius: 50%; width: 22px; height: 22px; display: none; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">✓</div>
+                </div>
+            </div>
+            <p id="upload-time" style="font-size: 12px; color: #64748b; margin-top: 8px; text-align: center;">Оригинал загружен оператором: 25.06.2026</p>
+            
+            <h3 style="margin-top: 25px;">Мои заказы</h3>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <div style="background: #f8fafc; padding: 10px; border-radius: 6px; font-size: 13px; border-left: 4px solid #3b82f6;">
+                    <div style="display:flex; justify-content:space-between; align-items: center;">
+                        <div>
+                            <span style="font-weight: 600; display: block;">Заказ #125 (Паспорт РФ)</span>
+                            <span style="font-size: 11px; color: #64748b;">от 27.06.2026</span>
+                        </div>
+                        <span style="color:#3b82f6; font-weight:bold;">Оплачен ✅</span>
+                    </div>
+                </div>
+                <div style="background: #f8fafc; padding: 10px; border-radius: 6px; font-size: 13px; border-left: 4px solid #f59e0b;">
+                    <div style="display:flex; justify-content:space-between; align-items: center;">
+                        <div>
+                            <span style="font-weight: 600; display: block;">Заказ #124 (Шенгенская виза)</span>
+                            <span style="font-size: 11px; color: #64748b;">от 26.06.2026</span>
+                        </div>
+                        <span style="color:#f59e0b; font-weight:bold;">В работе ⚙️</span>
+                    </div>
+                </div>
+                <div style="background: #f8fafc; padding: 10px; border-radius: 6px; font-size: 13px; border-left: 4px solid #10b981;">
+                    <div style="display:flex; justify-content:space-between; align-items: center;">
+                        <div>
+                            <span style="font-weight: 600; display: block;">Заказ #123 (Загранпаспорт)</span>
+                            <span style="font-size: 11px; color: #64748b;">от 25.06.2026</span>
+                        </div>
+                        <span style="color:#10b981; font-weight:bold;">Готов к выдаче 📦</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Оформление заказа</h3>
+            
+            <label style="font-size: 13px; font-weight: bold;">Выбор формата документа из каталога:</label>
+            <select class="select-input" id="service-select" onchange="adjustMask()">
+                <option value="passport">Паспорт РФ (35 х 45 мм)</option>
+                <option value="shengen">Шенгенская виза (35 х 45 мм, лицо 70-80%)</option>
+                <option value="custom">Кастомные параметры...</option>
+            </select>
+            
+            <div class="dimensions-row" id="custom-dims" style="display:none;">
+                <div>
+                    <label style="font-size:11px;">Ширина (мм)</label>
+                    <input type="number" class="text-input" value="40">
+                </div>
+                <div>
+                    <label style="font-size:11px;">Высота (мм)</label>
+                    <input type="number" class="text-input" value="50">
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <input type="checkbox" id="bw-print"> <label for="bw-print" style="font-size:14px;">Черно-белая печать</label>
+            </div>
+
+            <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+                <div style="flex: 1;">
+                    <label style="font-size: 13px; font-weight: bold; display: block; margin-bottom: 5px;">Количество фото:</label>
+                    <select class="select-input" id="photo-qty" style="margin-bottom: 10px;" onchange="handleQtyChange()">
+                        <option value="1">1 шт.</option>
+                        <option value="2">2 шт.</option>
+                        <option value="4" selected>4 шт.</option>
+                        <option value="6">6 шт.</option>
+                        <option value="custom">Ввести вручную...</option>
+                    </select>
+                    <input type="number" id="photo-qty-custom" class="text-input" style="display: none; margin-bottom: 0;" min="1" value="8" oninput="updatePrice()">
+                </div>
+                <div style="flex: 1;">
+                    <label style="font-size: 13px; font-weight: bold; display: block; margin-bottom: 5px;">Стоимость:</label>
+                    <div style="padding: 10px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; font-weight: bold; color: #0f172a; height: 38px; display: flex; align-items: center; justify-content: center; font-size: 16px;">
+                        <span id="price-display">350</span>&nbsp;₽
+                    </div>
+                </div>
+            </div>
+
+
+            <div style="display: flex; gap: 15px; align-items: center; margin-top: 20px;">
+                <button class="btn" style="margin-top: 0; flex: 1;" onclick="triggerPushNotification()">Оплатить заказ</button>
+                <div style="flex: 1; padding: 10px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; font-size: 12px; color: #1e40af; line-height: 1.4;">
+                    ⏱️ <b>Время готовности:</b><br>Примерно через <b>15 минут</b>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <script>
+        function selectPhoto(element, src) {
+            document.querySelectorAll('.photo-option').forEach(opt => {
+                opt.style.borderColor = 'transparent';
+                opt.querySelector('.select-badge').style.display = 'none';
+            });
+            element.style.borderColor = '#2563eb';
+            element.querySelector('.select-badge').style.display = 'flex';
+            
+            const uploadTime = document.getElementById('upload-time');
+            if (src.includes('1534528741775')) {
+                uploadTime.innerText = 'Оригинал загружен оператором: 25.06.2026';
+            } else {
+                uploadTime.innerText = 'Оригинал загружен оператором: 27.06.2026';
+            }
+        }
+        function loadServiceCatalog() {
+            let catalog = JSON.parse(localStorage.getItem('photo_services_catalog'));
+            if (!catalog) {
+                catalog = {
+                    passport: { name: "Паспорт РФ", width: 35, height: 45, basePrice: 350 },
+                    shengen: { name: "Шенгенская виза", width: 35, height: 45, basePrice: 350 }
+                };
+                localStorage.setItem('photo_services_catalog', JSON.stringify(catalog));
+            }
+            
+            const passportOpt = document.querySelector('#service-select option[value="passport"]');
+            if (passportOpt) {
+                passportOpt.innerText = `${catalog.passport.name} (${catalog.passport.width} х ${catalog.passport.height} мм)`;
+            }
+            const shengenOpt = document.querySelector('#service-select option[value="shengen"]');
+            if (shengenOpt) {
+                shengenOpt.innerText = `${catalog.shengen.name} (${catalog.shengen.width} х ${catalog.shengen.height} мм, лицо 70-80%)`;
+            }
+        }
+
+        function adjustMask() {
+            const select = document.getElementById('service-select');
+            const customDims = document.getElementById('custom-dims');
+            if (select.value === 'custom') {
+                customDims.style.display = 'flex';
+            } else {
+                customDims.style.display = 'none';
+            }
+            updatePrice();
+        }
+        function handleQtyChange() {
+            const select = document.getElementById('photo-qty');
+            const customInput = document.getElementById('photo-qty-custom');
+            if (select.value === 'custom') {
+                customInput.style.display = 'block';
+                customInput.focus();
+            } else {
+                customInput.style.display = 'none';
+            }
+            updatePrice();
+        }
+        function updatePrice() {
+            const select = document.getElementById('photo-qty');
+            let qty = 4;
+            if (select.value === 'custom') {
+                qty = parseInt(document.getElementById('photo-qty-custom').value) || 0;
+            } else {
+                qty = parseInt(select.value);
+            }
+            
+            let basePrice = 350;
+            const serviceType = document.getElementById('service-select').value;
+            const catalog = JSON.parse(localStorage.getItem('photo_services_catalog'));
+            if (catalog && catalog[serviceType]) {
+                basePrice = catalog[serviceType].basePrice;
+            }
+            
+            let price = 0;
+            if (qty === 1) {
+                price = Math.max(50, basePrice - 200);
+            } else if (qty === 2) {
+                price = Math.max(100, basePrice - 100);
+            } else if (qty === 4) {
+                price = basePrice;
+            } else if (qty === 6) {
+                price = basePrice + 100;
+            } else {
+                price = qty * Math.round(basePrice / 4.6);
+            }
+            document.getElementById('price-display').innerText = price;
+        }
+        function triggerPushNotification() {
+            alert('Заказ успешно оформлен и оплачен! Имитируем печать и отправку уведомления...');
+            setTimeout(() => {
+                document.getElementById('client-push').style.display = 'block';
+            }, 2500);
+        }
+        function resizeBranchSelect() {
+            const select = document.getElementById('branch-select');
+            if (!select) return;
+            const temp = document.createElement('span');
+            temp.style.visibility = 'hidden';
+            temp.style.position = 'absolute';
+            temp.style.fontSize = '18px';
+            temp.style.fontWeight = 'bold';
+            temp.style.fontFamily = window.getComputedStyle(select).fontFamily;
+            temp.style.whiteSpace = 'nowrap';
+            temp.style.padding = '0';
+            temp.style.margin = '0';
+            temp.innerText = select.options[select.selectedIndex].text;
+            document.body.appendChild(temp);
+            select.style.width = (temp.clientWidth + 70) + 'px';
+            document.body.removeChild(temp);
+        }
+        window.addEventListener('DOMContentLoaded', () => {
+            loadServiceCatalog();
+            resizeBranchSelect();
+            updatePrice();
+        });
+        window.addEventListener('resize', resizeBranchSelect);
+    </script>
+</body>
+</html>
