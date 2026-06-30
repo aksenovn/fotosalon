@@ -43,6 +43,12 @@
 </head>
 <body>
 
+    <div style="background: #e2e8f0; padding: 10px; text-align: center; font-family: sans-serif; font-size: 14px; border-bottom: 1px solid #cbd5e1; border-radius: 8px; margin-bottom: 20px;">
+        <a href="regandaut.html" style="margin: 0 10px; color: #2563eb; text-decoration: none; font-weight: bold;">Авторизация</a> |
+        <a href="klient.html" style="margin: 0 10px; color: #2563eb; text-decoration: none; font-weight: bold;">Кабинет клиента</a> |
+        <a href="sotrudnik.html" style="margin: 0 10px; color: #2563eb; text-decoration: none; font-weight: bold;">Панель сотрудника</a>
+    </div>
+
     <header>
         <select id="branch-select" onchange="resizeBranchSelect()" style="font-size: 18px; font-weight: bold; color: #2563eb; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px 45px 12px 15px; background: #fff; cursor: pointer; outline: none; font-family: inherit; max-width: 100%; box-sizing: border-box; line-height: 1.4; transition: width 0.15s ease;">
             <option value="ciolkovskogo">Фотоателье «Цифровое фото», г. Дзержинск, пр. Циолковского, 21Г</option>
@@ -157,8 +163,6 @@
         </div>
 
     </div>
-
-
 
     <script>
         function selectPhoto(element, src) {
